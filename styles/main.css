@@ -497,7 +497,11 @@ body {
   border: none;
   cursor: pointer;
   gap: 4px;
-  padding: 8px;
+  padding: 12px;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  align-items: center;
 }
 
 .mobile-menu-toggle span {
@@ -1577,6 +1581,11 @@ body {
   font-weight: var(--font-weight-normal);
   transition: var(--transition);
   backdrop-filter: blur(10px);
+  /* Enhanced mobile support */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input::placeholder,
@@ -2084,8 +2093,8 @@ body {
 }
 
 .social-links a {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(139, 92, 246, 0.1);
   display: flex;
@@ -2328,7 +2337,7 @@ body {
   }
 
   .scroll-text {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
   }
 
@@ -2434,6 +2443,12 @@ body {
     width: 100%;
   }
 
+  /* Better mobile spacing for gallery */
+  .features-horizontal {
+    margin: 1rem auto;
+    padding: 0;
+  }
+
   .feature-demo {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -2518,6 +2533,23 @@ body {
     padding: 0 1rem;
   }
 
+  /* Mobile form improvements for tablets/mobile */
+  .contact-form-section {
+    padding: 1.75rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+  }
+
+  .submit-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
   .demo-video {
     max-width: 100%;
   }
@@ -2545,6 +2577,30 @@ body {
 
   .nav-container {
     padding: 0 1rem;
+  }
+
+  /* Better mobile spacing */
+  .hero {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero-container {
+    padding: 0 1rem;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+
+  .features,
+  .demo,
+  .screenshots,
+  .security-section,
+  .contact {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .hero-title {
@@ -2651,7 +2707,7 @@ body {
   }
 
   .footer-brand p {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .footer-links {
@@ -2659,12 +2715,12 @@ body {
   }
 
   .footer-column h4 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 1rem;
   }
 
   .footer-column a {
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
   }
 
@@ -2674,15 +2730,42 @@ body {
   }
 
   .footer-bottom p {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .footer-email {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .social-links a {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Mobile form improvements for small screens */
+  .contact-form-section {
+    padding: 1.25rem;
+  }
+
+  .form-title {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 1rem 0.875rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .submit-btn {
+    padding: 1rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .field-error {
+    font-size: 0.875rem;
   }
 }

@@ -204,6 +204,64 @@
       .contact-info a:hover {
         color: var(--accent-secondary);
       }
+
+      /* Mobile responsive styles */
+      @media (max-width: 768px) {
+        .legal-page {
+          padding: 6rem 0 3rem;
+        }
+
+        .legal-content {
+          padding: 0 1rem;
+        }
+
+        .legal-header h1 {
+          font-size: 2rem;
+        }
+
+        .legal-header p {
+          font-size: 1rem;
+        }
+
+        .legal-section h2 {
+          font-size: 1.25rem;
+        }
+
+        .legal-section h3 {
+          font-size: 1.125rem;
+        }
+
+        .legal-section p {
+          font-size: 1rem;
+          line-height: 1.6;
+        }
+
+        .highlight-box,
+        .contact-info {
+          padding: 1.5rem;
+          margin: 1rem 0;
+        }
+
+        .back-link {
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .legal-content {
+          padding: 0 1rem;
+        }
+
+        .legal-header h1 {
+          font-size: 1.75rem;
+        }
+
+        .highlight-box,
+        .contact-info {
+          padding: 1.25rem;
+        }
+      }
     </style>
   </head>
   <body class="nebula-theme">
