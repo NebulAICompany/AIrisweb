@@ -160,7 +160,7 @@ body {
   position: relative;
 }
 
-/* Cosmic Background System */
+/* Cosmic Background System - Performance Optimized */
 .cosmic-background {
   position: fixed;
   top: 0;
@@ -169,26 +169,17 @@ body {
   height: 100%;
   z-index: -3;
   background: 
-    /* Bright nebula core regions */ radial-gradient(
-      ellipse 800px 500px at 35% 25%,
-      rgba(255, 100, 255, 0.8) 0%,
-      rgba(139, 92, 246, 0.6) 15%,
-      rgba(139, 92, 246, 0.3) 35%,
+    /* Simplified nebula for better performance */ radial-gradient(
+      ellipse 600px 400px at 35% 25%,
+      rgba(139, 92, 246, 0.4) 0%,
+      rgba(139, 92, 246, 0.2) 35%,
       transparent 65%
     ),
     radial-gradient(
-      ellipse 600px 900px at 70% 60%,
-      rgba(100, 255, 255, 0.7) 0%,
-      rgba(59, 130, 246, 0.5) 20%,
-      rgba(99, 102, 241, 0.25) 40%,
+      ellipse 500px 600px at 70% 60%,
+      rgba(99, 102, 241, 0.3) 0%,
+      rgba(99, 102, 241, 0.15) 40%,
       transparent 70%
-    ),
-    radial-gradient(
-      ellipse 700px 400px at 15% 75%,
-      rgba(255, 150, 100, 0.6) 0%,
-      rgba(236, 72, 153, 0.45) 25%,
-      rgba(219, 39, 119, 0.2) 45%,
-      transparent 75%
     ),
     /* Base gradient */
       linear-gradient(
@@ -199,7 +190,10 @@ body {
         #1a0b2e 75%,
         #0b0118 100%
       );
-  animation: nebulaFloat 20s ease-in-out infinite;
+  /* Performance optimizations */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: nebulaFloatOptimized 30s ease-in-out infinite;
 }
 
 .star-field {
@@ -210,44 +204,31 @@ body {
   height: 100%;
   z-index: -2;
   background-image:
-    /* Small stars */ radial-gradient(
+    /* Simplified stars for better performance */ radial-gradient(
       1px 1px at 20px 30px,
-      rgba(255, 255, 255, 0.7) 50%,
+      rgba(255, 255, 255, 0.5) 50%,
       transparent 51%
     ),
     radial-gradient(
       1px 1px at 80px 120px,
-      rgba(255, 255, 255, 0.65) 50%,
+      rgba(255, 255, 255, 0.4) 50%,
       transparent 51%
     ),
     radial-gradient(
-      1px 1px at 130px 90px,
-      rgba(255, 255, 255, 0.7) 50%,
+      2px 2px at 60px 40px,
+      rgba(255, 255, 255, 0.6) 50%,
       transparent 51%
     ),
     radial-gradient(
-      1px 1px at 160px 170px,
-      rgba(255, 255, 255, 0.65) 50%,
-      transparent 51%
-    ),
-    /* Medium stars */
-      radial-gradient(
-        2px 2px at 60px 40px,
-        rgba(255, 255, 255, 0.8) 50%,
-        transparent 51%
-      ),
-    radial-gradient(
-      2px 2px at 10px 140px,
-      rgba(255, 255, 255, 0.75) 50%,
-      transparent 51%
-    ),
-    radial-gradient(
-      2px 2px at 180px 70px,
-      rgba(255, 255, 255, 0.8) 50%,
+      2px 2px at 140px 80px,
+      rgba(255, 255, 255, 0.5) 50%,
       transparent 51%
     );
-  background-size: 200px 200px;
-  animation: starTwinkle 10s ease-in-out infinite;
+  background-size: 300px 300px;
+  /* Performance optimizations */
+  will-change: opacity;
+  transform: translate3d(0, 0, 0);
+  animation: starTwinkleOptimized 15s ease-in-out infinite;
 }
 
 .nebula-overlay {
@@ -259,16 +240,48 @@ body {
   z-index: -1;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(139, 92, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.08) 0%,
     transparent 50%
   );
-  animation: nebulaDepth 35s ease-in-out infinite;
+  /* Performance optimizations */
+  will-change: opacity;
+  transform: translate3d(0, 0, 0);
+  animation: nebulaDepthOptimized 45s ease-in-out infinite;
 }
 
-/* Animations */
+/* Performance Optimized Animations */
+@keyframes nebulaFloatOptimized {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(3px, -3px, 0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes starTwinkleOptimized {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes nebulaDepthOptimized {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Legacy animations - keep for compatibility */
 @keyframes nebulaFloat {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateX(0px) translateY(0px) rotate(0deg);
     opacity: 0.8;
   }
@@ -287,8 +300,7 @@ body {
 }
 
 @keyframes starTwinkle {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     filter: brightness(1);
   }
@@ -307,8 +319,7 @@ body {
 }
 
 @keyframes nebulaDepth {
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1) rotate(0deg);
     opacity: 0.6;
   }
@@ -323,6 +334,53 @@ body {
   90% {
     transform: scale(1.01) rotate(-0.2deg);
     opacity: 0.75;
+  }
+}
+
+/* Performance optimizations during scroll */
+body.scrolling .cosmic-background,
+body.scrolling .star-field,
+body.scrolling .nebula-overlay {
+  animation-play-state: paused;
+}
+
+/* Reduce blur effects during scrolling for better performance */
+body.scrolling .navbar {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+body.scrolling .gallery-container {
+  backdrop-filter: blur(10px);
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-background,
+  .star-field,
+  .nebula-overlay {
+    animation: none;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  .cosmic-background {
+    animation-duration: 45s; /* Slower on mobile */
+  }
+  
+  .star-field {
+    animation-duration: 20s;
+  }
+  
+  .nebula-overlay {
+    animation-duration: 60s;
   }
 }
 
@@ -351,8 +409,11 @@ body {
   transition: var(--navbar-transition);
   /* Ensure proper stacking context */
   isolation: isolate;
-  /* Performance optimization: will-change for smooth animations */
-  will-change: backdrop-filter;
+  /* Performance optimizations */
+  will-change: transform, backdrop-filter;
+  transform: translate3d(0, 0, 0);
+  /* Optimize compositing layer */
+  contain: layout style paint;
 }
 
 /* Browser compatibility fallback for older browsers */

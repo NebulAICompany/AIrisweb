@@ -23,30 +23,54 @@ class NebulaWebsite {
     this.startPerformanceAnimations();
   }
 
-  // Navbar scroll effects
+  // Navbar scroll effects with performance throttling
   setupScrollEffects() {
     let lastScrollTop = 0;
+    let scrollTimeout = null;
+    let isScrolling = false;
+
+    // Throttled scroll handler for better performance
+    const throttledScrollHandler = () => {
+      if (!isScrolling) {
+        window.requestAnimationFrame(() => {
+          const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
+
+          // Add/remove scrolled class
+          if (scrollTop > 50) {
+            this.navbar.classList.add("scrolled");
+          } else {
+            this.navbar.classList.remove("scrolled");
+          }
+
+          // Hide/show navbar on scroll with hardware acceleration
+          if (scrollTop > lastScrollTop && scrollTop > 100) {
+            this.navbar.style.transform = "translate3d(0, -100%, 0)";
+          } else {
+            this.navbar.style.transform = "translate3d(0, 0, 0)";
+          }
+
+          lastScrollTop = scrollTop;
+          isScrolling = false;
+        });
+        isScrolling = true;
+      }
+    };
+
+    // Debounced scroll end handler
+    const handleScrollEnd = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // Scroll ended - optimize animations
+        document.body.classList.remove('scrolling');
+      }, 150);
+    };
 
     window.addEventListener("scroll", () => {
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-
-      // Add/remove scrolled class
-      if (scrollTop > 50) {
-        this.navbar.classList.add("scrolled");
-      } else {
-        this.navbar.classList.remove("scrolled");
-      }
-
-      // Hide/show navbar on scroll
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        this.navbar.style.transform = "translateY(-100%)";
-      } else {
-        this.navbar.style.transform = "translateY(0)";
-      }
-
-      lastScrollTop = scrollTop;
-    });
+      document.body.classList.add('scrolling');
+      throttledScrollHandler();
+      handleScrollEnd();
+    }, { passive: true });
   }
 
   // Smooth scrolling for navigation links
@@ -699,17 +723,28 @@ class NebulaWebsite {
   }
 }
 
-// Stellar background animation system
+// Performance-Optimized Stellar background animation system
 class StellarBackground {
   constructor() {
-    this.createShootingStars();
-    this.createFloatingParticles();
+    this.isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.isMobile = window.innerWidth <= 768;
+    
+    if (!this.isReducedMotion) {
+      this.createShootingStars();
+      this.createFloatingParticles();
+    }
   }
 
   createShootingStars() {
+    // Reduce frequency on mobile for better performance
+    const interval = this.isMobile ? 8000 : 5000;
+    
     setInterval(() => {
-      this.createShootingStar();
-    }, 3000 + Math.random() * 5000);
+      // Don't create stars during scrolling
+      if (!document.body.classList.contains('scrolling')) {
+        this.createShootingStar();
+      }
+    }, interval + Math.random() * 3000);
   }
 
   createShootingStar() {
@@ -719,13 +754,15 @@ class StellarBackground {
       position: fixed;
       width: 2px;
       height: 2px;
-      background: linear-gradient(45deg, white, #8b5cf6);
+      background: rgba(139, 92, 246, 0.8);
       border-radius: 50%;
       z-index: -1;
       pointer-events: none;
       left: ${Math.random() * 100}vw;
       top: ${Math.random() * 50}vh;
       animation: shootingStar 2s linear forwards;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
     `;
 
     document.body.appendChild(star);
@@ -738,10 +775,13 @@ class StellarBackground {
   }
 
   createFloatingParticles() {
-    for (let i = 0; i < 20; i++) {
+    // Reduce particles on mobile
+    const particleCount = this.isMobile ? 8 : 15;
+    
+    for (let i = 0; i < particleCount; i++) {
       setTimeout(() => {
         this.createParticle();
-      }, i * 200);
+      }, i * 300);
     }
   }
 
@@ -750,15 +790,17 @@ class StellarBackground {
     particle.className = "floating-particle";
     particle.style.cssText = `
       position: fixed;
-      width: ${2 + Math.random() * 4}px;
-      height: ${2 + Math.random() * 4}px;
-      background: rgba(139, 92, 246, ${0.3 + Math.random() * 0.7});
+      width: ${2 + Math.random() * 3}px;
+      height: ${2 + Math.random() * 3}px;
+      background: rgba(139, 92, 246, ${0.2 + Math.random() * 0.4});
       border-radius: 50%;
       z-index: -1;
       pointer-events: none;
       left: ${Math.random() * 100}vw;
       top: ${Math.random() * 100}vh;
-      animation: floatParticle ${10 + Math.random() * 20}s ease-in-out infinite;
+      animation: floatParticle ${15 + Math.random() * 15}s ease-in-out infinite;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
     `;
 
     document.body.appendChild(particle);
