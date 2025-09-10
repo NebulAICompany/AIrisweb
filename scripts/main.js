@@ -262,19 +262,18 @@ class NebulaWebsite {
         publicKey: EMAILJS_CONFIG.publicKey,
       };
     } else {
-      // Fallback: Environment variables veya güvenli değerler
-      const publicKey =
-        process.env.EMAILJS_PUBLIC_KEY || "YOUR_PUBLIC_KEY_HERE";
-      const serviceId =
-        process.env.EMAILJS_SERVICE_ID || "YOUR_SERVICE_ID_HERE";
-      const templateId =
-        process.env.EMAILJS_TEMPLATE_ID || "YOUR_TEMPLATE_ID_HERE";
+      // Fallback: Güvenli varsayılan değerler
+      const config = {
+        publicKey: "RCirv8j1Hdd5u3soI",
+        serviceId: "service_m8yq9e8",
+        templateId: "template_kc8bl1l",
+      };
 
-      emailjs.init(publicKey);
+      emailjs.init(config.publicKey);
       this.emailConfig = {
-        serviceId: serviceId,
-        templateId: templateId,
-        publicKey: publicKey,
+        serviceId: config.serviceId,
+        templateId: config.templateId,
+        publicKey: config.publicKey,
       };
     }
   }

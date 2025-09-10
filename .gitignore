@@ -6,7 +6,7 @@
 
 # Configuration files with secrets
 config/secrets.js
-config/emailjs-config.js
+# config/emailjs-config.js (şimdilik kullanılmıyor)
 
 # Logs
 *.log
