@@ -883,21 +883,68 @@ body {
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
   position: relative;
+  /* Performance optimizations */
+  contain: layout style paint;
+  isolation: isolate;
+  /* Modern scroll-snap support */
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
 
 .gallery-track {
   display: flex;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   gap: 0;
-  width: 100%;
+  width: calc(
+    5 * 100vw
+  ); /* Dynamically set by JavaScript - 5 slides * viewport width */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  /* Advanced performance optimizations */
+  contain: layout style paint;
+  transform-origin: 0 0;
+}
+
+/* Disable transitions during active dragging */
+.gallery-track.dragging {
+  transition: none;
+  /* Enable momentum scrolling optimizations */
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Ultra-smooth transition for programmatic changes */
+.gallery-track.smooth-transition {
+  transition: transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Momentum-specific ultra-smooth transition - Natural deceleration curve */
+.gallery-track.momentum-transition {
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Page indicators with smooth hover effects */
+.page-indicator {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.page-indicator:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
 }
 
 .gallery-item {
-  min-width: 100vw;
-  width: 100vw;
+  /* Each item takes full viewport width for proper carousel behavior */
+  min-width: 100vw; /* Full viewport width */
+  width: 100vw; /* Full viewport width */
   flex-shrink: 0;
   padding: 5rem;
   box-sizing: border-box;
+  /* Modern scroll-snap alignment */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .feature-demo {
@@ -2255,6 +2302,8 @@ body {
   /* Tablet Gallery - Only when screen is too narrow for 2-column layout */
   .gallery-item {
     padding: 3rem 2rem;
+    min-width: 100vw; /* Full viewport width on tablet */
+    width: 100vw; /* Full viewport width on tablet */
   }
 
   .feature-demo {
@@ -2439,8 +2488,8 @@ body {
 
   .gallery-item {
     padding: 2rem 1rem;
-    min-width: 100%;
-    width: 100%;
+    min-width: 100vw; /* Full viewport width on mobile */
+    width: 100vw; /* Full viewport width on mobile */
   }
 
   /* Better mobile spacing for gallery */

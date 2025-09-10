@@ -836,17 +836,27 @@ function initializeGallery() {
   let currentIndex = 0;
   const totalItems = items.length;
 
+  // Set track width dynamically based on number of items
+  track.style.width = `calc(${totalItems} * 100vw)`;
+
+  // Each gallery item should take full viewport width
+  items.forEach((item) => {
+    item.style.width = "100vw";
+    item.style.minWidth = "100vw";
+  });
+
   // Responsive gallery handling
   function handleResponsiveGallery() {
-    const isMobile = window.innerWidth <= 768;
-    const isTablet = window.innerWidth <= 1400;
+    // Both mobile and desktop: each item takes full viewport width
+    // Track width is totalItems * 100vw to hold all slides side by side
+    items.forEach((item) => {
+      item.style.width = "100vw";
+      item.style.minWidth = "100vw";
+    });
+    track.style.width = `calc(${totalItems} * 100vw)`;
 
-    if (isMobile || isTablet) {
-      // On mobile/tablet, reset transform to show first slide
-      track.style.transform = "translateX(0)";
-      currentIndex = 0;
-      updateNavigation();
-    }
+    // Keep current slide position but update navigation
+    updateNavigation();
   }
 
   function updateNavigation() {
@@ -860,27 +870,34 @@ function initializeGallery() {
     });
   }
 
-  function goToSlide(index) {
-    const isMobile = window.innerWidth <= 768;
-    const isTablet = window.innerWidth <= 1400;
+  function goToSlide(index, isSmooth = false, isMomentum = false) {
+    currentIndex = index;
+    // Calculate transform based on viewport width
+    const viewportWidth = window.innerWidth;
+    const translateX = -currentIndex * viewportWidth;
 
-    if (isMobile || isTablet) {
-      // On mobile/tablet, just update current index without transform
-      currentIndex = index;
-      updateNavigation();
-      return;
+    // Add appropriate transition class for enhanced animations
+    if (isSmooth || isMomentum) {
+      const transitionClass = isMomentum
+        ? "momentum-transition"
+        : "smooth-transition";
+      const duration = isMomentum ? 1000 : 700; // Match CSS timing
+
+      track.classList.add(transitionClass);
+      setTimeout(() => {
+        track.classList.remove(transitionClass);
+      }, duration);
     }
 
-    currentIndex = index;
-    const translateX = -currentIndex * 100;
-    track.style.transform = `translateX(${translateX}%)`;
+    track.style.transform = `translateX(${translateX}px)`;
     updateNavigation();
   }
 
-  // Add pagination click events
+  // Add pagination click events with smooth transitions
   indicators.forEach((indicator, index) => {
     indicator.addEventListener("click", () => {
-      goToSlide(index);
+      // Use smooth transition for pagination clicks
+      goToSlide(index, true);
     });
   });
 
@@ -888,49 +905,325 @@ function initializeGallery() {
   updateNavigation();
 
   // Handle responsive gallery on resize
-  window.addEventListener("resize", handleResponsiveGallery);
+  window.addEventListener("resize", () => {
+    handleResponsiveGallery();
+    // Recalculate current slide position on resize
+    goToSlide(currentIndex, false);
+  });
 
   // Initial responsive check
   handleResponsiveGallery();
 
   // Touch/swipe support for mobile
   let startX = 0;
+  let startY = 0;
   let currentX = 0;
+  let currentY = 0;
+  let isHorizontalSwipe = false;
 
   track.addEventListener("touchstart", (e) => {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      startX = e.touches[0].clientX;
-    }
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isHorizontalSwipe = false;
   });
 
   track.addEventListener("touchmove", (e) => {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      currentX = e.touches[0].clientX;
-      e.preventDefault(); // Prevent page scroll during swipe
+    currentX = e.touches[0].clientX;
+    currentY = e.touches[0].clientY;
+
+    const diffX = Math.abs(currentX - startX);
+    const diffY = Math.abs(currentY - startY);
+
+    // Only prevent default if this is clearly a horizontal swipe
+    if (diffX > diffY && diffX > 10) {
+      isHorizontalSwipe = true;
+      e.preventDefault(); // Prevent page scroll only for horizontal swipes
     }
   });
 
   track.addEventListener("touchend", () => {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return;
+    if (!isHorizontalSwipe) return;
 
     const diff = startX - currentX;
     const threshold = 50;
 
     if (Math.abs(diff) > threshold) {
       if (diff > 0 && currentIndex < totalItems - 1) {
-        // Swipe left - next
-        goToSlide(currentIndex + 1);
+        // Swipe left - next with smooth animation
+        goToSlide(currentIndex + 1, true);
         console.log("Swiped left - Next slide");
       } else if (diff < 0 && currentIndex > 0) {
-        // Swipe right - prev
-        goToSlide(currentIndex - 1);
+        // Swipe right - prev with smooth animation
+        goToSlide(currentIndex - 1, true);
         console.log("Swiped right - Previous slide");
       }
     }
+
+    // Reset swipe tracking
+    isHorizontalSwipe = false;
   });
+
+  // Modern momentum-based mouse drag system
+  let mouseState = {
+    startX: 0,
+    currentX: 0,
+    lastX: 0,
+    isDragging: false,
+    hasMouseMoved: false,
+    dragOffset: 0,
+    initialTransform: 0,
+    velocity: 0,
+    velocityTracker: [],
+    momentumID: null,
+    lastTime: 0,
+  };
+
+  // Momentum animation parameters - Fine-tuned for smooth experience
+  const momentumConfig = {
+    friction: 0.94, // Higher friction for better control
+    minVelocity: 0.3, // Lower threshold for more responsive snapping
+    velocityMultiplier: 1.2, // Higher multiplier for more natural feel
+    snapThreshold: 0.25, // Earlier snapping for smoother transitions
+    maxVelocity: 12, // Slightly lower max for better control
+    boundaryBounce: 0.25, // Softer boundary bounce
+  };
+
+  function startMomentumAnimation() {
+    if (mouseState.momentumID) {
+      cancelAnimationFrame(mouseState.momentumID);
+    }
+
+    function momentumFrame() {
+      // Apply friction to velocity
+      mouseState.velocity *= momentumConfig.friction;
+
+      // Move based on velocity
+      const currentTransform = getCurrentTransform();
+      const newTransform = currentTransform + mouseState.velocity;
+
+      // Calculate which slide we should be at
+      const viewportWidth = window.innerWidth;
+      const slideWidth = viewportWidth; // Each slide takes full viewport width
+
+      const targetSlideIndex = Math.round(-newTransform / slideWidth);
+      const targetSlideIndex_clamped = Math.max(
+        0,
+        Math.min(totalItems - 1, targetSlideIndex)
+      );
+
+      // Check if we're close enough to snap to a slide
+      const targetTransform = -targetSlideIndex_clamped * slideWidth;
+      const distanceToTarget = Math.abs(newTransform - targetTransform);
+
+      if (
+        Math.abs(mouseState.velocity) < momentumConfig.minVelocity ||
+        distanceToTarget < slideWidth * momentumConfig.snapThreshold
+      ) {
+        // Snap to nearest slide with momentum animation
+        cancelAnimationFrame(mouseState.momentumID);
+        mouseState.momentumID = null;
+        currentIndex = targetSlideIndex_clamped;
+        goToSlide(currentIndex, false, true); // Use momentum transition
+        return;
+      }
+
+      // Continue momentum if within bounds
+      if (targetSlideIndex >= 0 && targetSlideIndex < totalItems) {
+        track.style.transform = `translateX(${newTransform}px)`;
+      } else {
+        // Bounce back from boundaries
+        mouseState.velocity *= -momentumConfig.boundaryBounce;
+        if (Math.abs(mouseState.velocity) < momentumConfig.minVelocity) {
+          cancelAnimationFrame(mouseState.momentumID);
+          mouseState.momentumID = null;
+          goToSlide(currentIndex, false, true); // Use momentum transition
+          return;
+        }
+      }
+
+      mouseState.momentumID = requestAnimationFrame(momentumFrame);
+    }
+
+    mouseState.momentumID = requestAnimationFrame(momentumFrame);
+  }
+
+  function getCurrentTransform() {
+    const computedStyle = window.getComputedStyle(track);
+    const matrix = computedStyle.transform;
+    if (matrix !== "none") {
+      const values = matrix.split("(")[1].split(")")[0].split(",");
+      return parseFloat(values[4]) || 0;
+    }
+    // Use viewport width for calculations
+    const viewportWidth = window.innerWidth;
+    return -currentIndex * viewportWidth;
+  }
+
+  function calculateVelocity() {
+    if (mouseState.velocityTracker.length < 2) return 0;
+
+    const recent = mouseState.velocityTracker.slice(-5); // Use last 5 points
+    let totalVelocity = 0;
+    let count = 0;
+
+    for (let i = 1; i < recent.length; i++) {
+      const timeDiff = recent[i].time - recent[i - 1].time;
+      if (timeDiff > 0) {
+        const velocity = (recent[i].x - recent[i - 1].x) / timeDiff;
+        totalVelocity += velocity;
+        count++;
+      }
+    }
+
+    return count > 0
+      ? (totalVelocity / count) * momentumConfig.velocityMultiplier
+      : 0;
+  }
+
+  track.addEventListener("mousedown", (e) => {
+    // Cancel any ongoing momentum
+    if (mouseState.momentumID) {
+      cancelAnimationFrame(mouseState.momentumID);
+      mouseState.momentumID = null;
+    }
+
+    mouseState.startX = e.clientX;
+    mouseState.currentX = e.clientX;
+    mouseState.lastX = e.clientX;
+    mouseState.isDragging = true;
+    mouseState.hasMouseMoved = false;
+    mouseState.dragOffset = 0;
+    mouseState.velocity = 0;
+    mouseState.velocityTracker = [];
+    mouseState.lastTime = performance.now();
+
+    // Get current transform value
+    mouseState.initialTransform = getCurrentTransform();
+
+    // Add dragging class and styles
+    track.classList.add("dragging");
+    track.style.cursor = "grabbing";
+    track.style.userSelect = "none";
+    document.body.style.userSelect = "none";
+
+    // Add initial velocity tracking point
+    mouseState.velocityTracker.push({
+      x: e.clientX,
+      time: mouseState.lastTime,
+    });
+
+    e.preventDefault();
+  });
+
+  track.addEventListener("mousemove", (e) => {
+    if (!mouseState.isDragging) return;
+
+    const now = performance.now();
+    mouseState.currentX = e.clientX;
+    mouseState.hasMouseMoved = true;
+    mouseState.dragOffset = mouseState.currentX - mouseState.startX;
+
+    // Track velocity
+    mouseState.velocityTracker.push({
+      x: e.clientX,
+      time: now,
+    });
+
+    // Keep only recent tracking points
+    if (mouseState.velocityTracker.length > 10) {
+      mouseState.velocityTracker.shift();
+    }
+
+    // Apply resistance at boundaries
+    let resistance = 1;
+    if (
+      (currentIndex === 0 && mouseState.dragOffset > 0) ||
+      (currentIndex === totalItems - 1 && mouseState.dragOffset < 0)
+    ) {
+      // Elastic resistance at boundaries
+      const maxResistance = 150;
+      const elasticFactor = Math.min(
+        Math.abs(mouseState.dragOffset) / maxResistance,
+        1
+      );
+      resistance = Math.pow(1 - elasticFactor, 2) * 0.5 + 0.1;
+    }
+
+    // Apply real-time visual feedback
+    const newTransform =
+      mouseState.initialTransform + mouseState.dragOffset * resistance;
+    track.style.transform = `translateX(${newTransform}px)`;
+
+    mouseState.lastX = mouseState.currentX;
+    mouseState.lastTime = now;
+  });
+
+  track.addEventListener("mouseup", () => {
+    if (!mouseState.isDragging) return;
+
+    // Remove dragging class
+    track.classList.remove("dragging");
+    document.body.style.userSelect = "";
+
+    if (!mouseState.hasMouseMoved) {
+      // Simple click, no momentum
+      mouseState.isDragging = false;
+      track.style.cursor = "grab";
+      track.style.userSelect = "";
+      return;
+    }
+
+    // Calculate final velocity for momentum
+    mouseState.velocity = calculateVelocity();
+
+    // Clamp velocity to prevent extreme speeds
+    mouseState.velocity = Math.max(
+      -momentumConfig.maxVelocity,
+      Math.min(momentumConfig.maxVelocity, mouseState.velocity)
+    );
+
+    // Start momentum animation if velocity is significant
+    if (Math.abs(mouseState.velocity) > momentumConfig.minVelocity) {
+      startMomentumAnimation();
+    } else {
+      // No significant velocity, just snap to nearest slide
+      const viewportWidth = window.innerWidth;
+      const currentTransform = getCurrentTransform();
+      const nearestSlide = Math.round(-currentTransform / viewportWidth);
+      const targetSlide = Math.max(0, Math.min(totalItems - 1, nearestSlide));
+
+      currentIndex = targetSlide;
+      goToSlide(currentIndex, true); // Use smooth transition for low velocity
+    }
+
+    mouseState.isDragging = false;
+    mouseState.hasMouseMoved = false;
+    track.style.cursor = "grab";
+    track.style.userSelect = "";
+  });
+
+  track.addEventListener("mouseleave", () => {
+    if (mouseState.isDragging) {
+      // Clean up and snap to current slide
+      if (mouseState.momentumID) {
+        cancelAnimationFrame(mouseState.momentumID);
+        mouseState.momentumID = null;
+      }
+
+      track.classList.remove("dragging");
+      document.body.style.userSelect = "";
+      goToSlide(currentIndex, true);
+
+      mouseState.isDragging = false;
+      mouseState.hasMouseMoved = false;
+      track.style.cursor = "grab";
+      track.style.userSelect = "";
+    }
+  });
+
+  // Set initial cursor style
+  track.style.cursor = "grab";
+  track.style.transition = "cursor 0.2s ease";
 
   console.log("🎠 Horizontal Gallery Navigation Initialized");
 }
