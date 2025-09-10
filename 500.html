@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Error - AIris | Nebula Intelligence</title>
+    <meta
+      name="description"
+      content="We're experiencing technical difficulties. Our team is working to resolve the issue. Return to AIris homepage."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <link rel="stylesheet" href="styles/main.css" />
+
+    <style>
+      .error-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 100%);
+      }
+
+      .error-content {
+        text-align: center;
+        max-width: 600px;
+        color: var(--text-primary);
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+      }
+
+      .error-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .error-description {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--accent-primary),
+          var(--accent-secondary)
+        );
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--accent-primary);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--accent-primary);
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent-primary);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        color: #ff6b6b;
+        font-weight: 500;
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body class="nebula-theme">
+    <!-- Cosmic Background Layers -->
+    <div class="cosmic-background"></div>
+    <div class="star-field"></div>
+    <div class="nebula-overlay"></div>
+
+    <main class="error-page" role="main">
+      <div class="error-content">
+        <div class="error-code" aria-hidden="true">500</div>
+        <h1 class="error-title">Server Error</h1>
+
+        <div class="status-indicator">
+          <i class="fas fa-exclamation-triangle pulse" aria-hidden="true"></i>
+          <span>System Temporarily Unavailable</span>
+        </div>
+
+        <p class="error-description">
+          Our AI systems are experiencing a temporary glitch in the matrix. Our
+          engineering team has been notified and is working to restore full
+          functionality.
+        </p>
+        <div class="error-actions">
+          <a href="/" class="btn-primary" aria-label="Return to homepage">
+            <i class="fas fa-home" aria-hidden="true"></i>
+            Go Home
+          </a>
+          <a
+            href="javascript:location.reload()"
+            class="btn-secondary"
+            aria-label="Refresh page"
+          >
+            <i class="fas fa-redo" aria-hidden="true"></i>
+            Try Again
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Auto-refresh after 30 seconds
+      setTimeout(function () {
+        if (confirm("Would you like to try refreshing the page?")) {
+          location.reload();
+        }
+      }, 30000);
+    </script>
+  </body>
+</html>

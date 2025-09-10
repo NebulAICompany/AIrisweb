@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://nebulaiintelligence.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
+
+# Disallow sensitive areas
+Disallow: /config/
+Disallow: /scripts/
+Disallow: *.log$
+Disallow: *.bak$
+
+# Allow important assets
+Allow: /assets/
+Allow: /styles/
+
+# Host preference
+Host: nebulaiintelligence.com
