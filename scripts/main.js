@@ -838,22 +838,35 @@ function initializeGallery() {
 
   // Set track width dynamically based on number of items
   track.style.width = `calc(${totalItems} * 100vw)`;
-
+  
   // Each gallery item should take full viewport width
-  items.forEach((item) => {
+  items.forEach((item, index) => {
     item.style.width = "100vw";
     item.style.minWidth = "100vw";
   });
+  
+  // Log initialization only for mobile debugging
+  if (window.innerWidth <= 768) {
+    console.log(`🎠 Mobile Gallery initialized:`, {
+      totalItems: totalItems,
+      viewportWidth: window.innerWidth
+    });
+  }
 
   // Responsive gallery handling
   function handleResponsiveGallery() {
+    const viewportWidth = window.innerWidth;
+    
     // Both mobile and desktop: each item takes full viewport width
-    // Track width is totalItems * 100vw to hold all slides side by side
-    items.forEach((item) => {
-      item.style.width = "100vw";
-      item.style.minWidth = "100vw";
+    // Track width is totalItems * viewport width to hold all slides side by side
+    items.forEach((item, index) => {
+      item.style.width = `${viewportWidth}px`;
+      item.style.minWidth = `${viewportWidth}px`;
+      item.style.maxWidth = `${viewportWidth}px`;
     });
-    track.style.width = `calc(${totalItems} * 100vw)`;
+    
+    const totalTrackWidth = totalItems * viewportWidth;
+    track.style.width = `${totalTrackWidth}px`;
 
     // Keep current slide position but update navigation
     updateNavigation();
@@ -875,6 +888,17 @@ function initializeGallery() {
     // Calculate transform based on viewport width
     const viewportWidth = window.innerWidth;
     const translateX = -currentIndex * viewportWidth;
+
+    // DEBUG: Log the calculations (mobile only)
+    if (viewportWidth <= 768) {
+      console.log(`🎠 Mobile Gallery Debug:`, {
+        slideIndex: index,
+        viewportWidth: viewportWidth,
+        translateX: translateX,
+        totalItems: totalItems,
+        trackWidth: track.style.width
+      });
+    }
 
     // Add appropriate transition class for enhanced animations
     if (isSmooth || isMomentum) {
@@ -913,6 +937,11 @@ function initializeGallery() {
 
   // Initial responsive check
   handleResponsiveGallery();
+  
+  // Force initial position to slide 0
+  setTimeout(() => {
+    goToSlide(0, false);
+  }, 100);
 
   // Touch/swipe support for mobile
   let startX = 0;
@@ -951,11 +980,9 @@ function initializeGallery() {
       if (diff > 0 && currentIndex < totalItems - 1) {
         // Swipe left - next with smooth animation
         goToSlide(currentIndex + 1, true);
-        console.log("Swiped left - Next slide");
       } else if (diff < 0 && currentIndex > 0) {
         // Swipe right - prev with smooth animation
         goToSlide(currentIndex - 1, true);
-        console.log("Swiped right - Previous slide");
       }
     }
 
@@ -1225,7 +1252,10 @@ function initializeGallery() {
   track.style.cursor = "grab";
   track.style.transition = "cursor 0.2s ease";
 
-  console.log("🎠 Horizontal Gallery Navigation Initialized");
+  // Only log for mobile debugging
+  if (window.innerWidth <= 768) {
+    console.log("🎠 Mobile Gallery Navigation Initialized");
+  }
 }
 
 // Add CSS animations dynamically
