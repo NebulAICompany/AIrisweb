@@ -20,7 +20,6 @@ class NebulaWebsite {
     this.setupDownloadButtons();
     this.setupScrollIndicator();
     this.setupContactForm();
-    this.setupSecureEmail();
     this.startPerformanceAnimations();
   }
 
@@ -693,27 +692,6 @@ class NebulaWebsite {
         }
       }, 300);
     }, 5000); // Show for 5 seconds
-  }
-
-  // Setup secure email display
-  setupSecureEmail() {
-    // Güvenli email adresini oluştur
-    const secureEmail =
-      typeof getSecureEmail !== "undefined"
-        ? getSecureEmail()
-        : "nebulaicompany" + "@" + "gmail.com";
-
-    // Tüm email elementlerini bul ve güncelle
-    const emailElements = document.querySelectorAll("#email-text");
-    const emailLinks = document.querySelectorAll("#footer-email");
-
-    emailElements.forEach((element) => {
-      element.textContent = secureEmail;
-    });
-
-    emailLinks.forEach((link) => {
-      link.href = "mailto:" + secureEmail;
-    });
   }
 
   // Utility function for smooth animations
