@@ -118,7 +118,9 @@ class NebulaWebsite {
   // Mobile menu functionality
   setupMobileMenu() {
     if (this.mobileMenuToggle && this.navMenu) {
-      this.mobileMenuToggle.addEventListener("click", () => {
+      this.mobileMenuToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         this.toggleMobileMenu();
       });
 
@@ -135,12 +137,20 @@ class NebulaWebsite {
     this.navMenu.classList.toggle("mobile-open");
     this.mobileMenuToggle.classList.toggle("active");
     document.body.classList.toggle("mobile-menu-open");
+    
+    if (this.navMenu.classList.contains("mobile-open")) {
+      // Ensure menu is visible (move to body to avoid parent issues)
+      document.body.appendChild(this.navMenu);
+    } else {
+      this.navMenu.style.display = "none";
+    }
   }
 
   closeMobileMenu() {
     this.navMenu.classList.remove("mobile-open");
     this.mobileMenuToggle.classList.remove("active");
     document.body.classList.remove("mobile-menu-open");
+    this.navMenu.style.display = "none";
   }
 
   // Update active navigation link based on scroll position
@@ -1372,47 +1382,7 @@ style.textContent = `
     background: linear-gradient(135deg, var(--warning), #ffa502);
   }
   
-  /* Mobile menu styles */
-  @media (max-width: 768px) {
-    .nav-menu {
-      position: fixed;
-      top: var(--navbar-height);
-      left: 0;
-      right: 0;
-      background: linear-gradient(135deg, rgba(13, 2, 33, 0.95), rgba(26, 11, 46, 0.9));
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(139, 92, 246, 0.2);
-      flex-direction: column;
-      padding: 2rem;
-      gap: 1.5rem;
-      transform: translateY(-100%);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 999;
-    }
-    
-    .nav-menu.mobile-open {
-      display: flex;
-      transform: translateY(0);
-      opacity: 1;
-    }
-    
-    .mobile-menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    
-    .mobile-menu-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-    
-    .mobile-menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -6px);
-    }
-    
-    body.mobile-menu-open {
-      overflow: hidden;
-    }
-  }
+  /* Mobile menu styles moved to main.css */
 `;
 
 document.head.appendChild(style);
