@@ -29,6 +29,8 @@ class NebulaWebsite {
     let lastScrollTop = 0;
     let scrollTimeout = null;
     let isScrolling = false;
+    let isUserScrolling = false;
+    let scrollStartTime = 0;
 
     // Throttled scroll handler for better performance
     const throttledScrollHandler = () => {
@@ -36,6 +38,7 @@ class NebulaWebsite {
         window.requestAnimationFrame(() => {
           const scrollTop =
             window.pageYOffset || document.documentElement.scrollTop;
+          const currentTime = Date.now();
 
           // Add/remove scrolled class
           if (scrollTop > 50) {
@@ -44,11 +47,22 @@ class NebulaWebsite {
             this.navbar.classList.remove("scrolled");
           }
 
-          // Hide/show navbar on scroll with hardware acceleration
-          if (scrollTop > lastScrollTop && scrollTop > 100) {
+          // Only hide navbar on actual user scrolling, not programmatic scrolls
+          // Check if this is a significant scroll movement by the user
+          const scrollDelta = Math.abs(scrollTop - lastScrollTop);
+          const timeDelta = currentTime - scrollStartTime;
+          
+          // Only consider it user scrolling if:
+          // 1. There's a significant scroll movement (more than 5px)
+          // 2. It's been at least 100ms since last scroll (prevents rapid programmatic scrolls)
+          // 3. The scroll is in a downward direction
+          if (scrollDelta > 5 && timeDelta > 100 && scrollTop > lastScrollTop && scrollTop > 100) {
             this.navbar.style.transform = "translate3d(0, -100%, 0)";
-          } else {
+            isUserScrolling = true;
+          } else if (scrollTop <= lastScrollTop || scrollTop <= 100) {
+            // Show navbar when scrolling up or near the top
             this.navbar.style.transform = "translate3d(0, 0, 0)";
+            isUserScrolling = false;
           }
 
           lastScrollTop = scrollTop;
@@ -64,10 +78,15 @@ class NebulaWebsite {
       scrollTimeout = setTimeout(() => {
         // Scroll ended - optimize animations
         document.body.classList.remove('scrolling');
+        isUserScrolling = false;
       }, 150);
     };
 
+    // Track when scrolling starts
     window.addEventListener("scroll", () => {
+      if (!isUserScrolling) {
+        scrollStartTime = Date.now();
+      }
       document.body.classList.add('scrolling');
       throttledScrollHandler();
       handleScrollEnd();
@@ -125,9 +144,12 @@ class NebulaWebsite {
         this.toggleMobileMenu();
       });
 
-      // Close menu when clicking outside
+      // Close menu when clicking outside (only on mobile)
       document.addEventListener("click", (e) => {
-        if (!this.navbar.contains(e.target)) {
+        // Only close mobile menu if it's actually open and we're on mobile
+        if (window.innerWidth <= 768 && 
+            this.navMenu.classList.contains("mobile-open") && 
+            !this.navbar.contains(e.target)) {
           this.closeMobileMenu();
         }
       });
@@ -143,7 +165,9 @@ class NebulaWebsite {
       // Ensure menu is visible (move to body to avoid parent issues)
       document.body.appendChild(this.navMenu);
     } else {
-      this.navMenu.style.display = "none";
+      // Don't set display: none, just remove the mobile-open class
+      // The CSS will handle the visibility
+      this.navMenu.style.display = "";
     }
   }
 
@@ -151,7 +175,9 @@ class NebulaWebsite {
     this.navMenu.classList.remove("mobile-open");
     this.mobileMenuToggle.classList.remove("active");
     document.body.classList.remove("mobile-menu-open");
-    this.navMenu.style.display = "none";
+    // Don't set display: none, just remove the mobile-open class
+    // The CSS will handle the visibility
+    this.navMenu.style.display = "";
   }
 
   // Update active navigation link based on scroll position
