@@ -8,6 +8,18 @@ class NebulaWebsite {
     this.navbar = document.getElementById("navbar");
     this.mobileMenuToggle = document.getElementById("mobile-menu-toggle");
     this.navMenu = document.getElementById("nav-menu");
+    
+    // Force desktop navigation visibility on load
+    if (window.innerWidth > 768) {
+      if (this.navMenu) {
+        this.navMenu.style.display = 'flex';
+        this.navMenu.classList.remove('mobile-open');
+      }
+      if (this.mobileMenuToggle) {
+        this.mobileMenuToggle.style.display = 'none';
+      }
+    }
+    
     this.init();
   }
 
@@ -21,6 +33,38 @@ class NebulaWebsite {
     this.setupScrollIndicator();
     this.setupContactForm();
     this.startPerformanceAnimations();
+    this.setupResponsiveNavigation();
+  }
+
+  // Handle responsive navigation
+  setupResponsiveNavigation() {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        // Desktop mode
+        if (this.navMenu) {
+          this.navMenu.style.display = 'flex';
+          this.navMenu.classList.remove('mobile-open');
+        }
+        if (this.mobileMenuToggle) {
+          this.mobileMenuToggle.style.display = 'none';
+        }
+        document.body.classList.remove('mobile-menu-open');
+      } else {
+        // Mobile mode
+        if (this.navMenu) {
+          this.navMenu.style.display = '';
+        }
+        if (this.mobileMenuToggle) {
+          this.mobileMenuToggle.style.display = '';
+        }
+      }
+    };
+
+    // Call on load
+    handleResize();
+    
+    // Call on resize
+    window.addEventListener('resize', handleResize);
   }
 
   // Navbar scroll effects with performance throttling
@@ -121,7 +165,6 @@ class NebulaWebsite {
       // Add click event to toggle button
       this.mobileMenuToggle.addEventListener("click", (e) => {
         e.preventDefault();
-        e.stopPropagation();
         this.toggleMobileMenu();
       });
 
@@ -139,36 +182,17 @@ class NebulaWebsite {
           this.closeMobileMenu();
         });
       });
-    } else {
-      console.error('Mobile menu elements not found:', {
-        toggle: this.mobileMenuToggle,
-        menu: this.navMenu
-      });
     }
   }
 
   toggleMobileMenu() {
+    this.navMenu.classList.toggle("mobile-open");
+    this.mobileMenuToggle.classList.toggle("active");
+    document.body.classList.toggle("mobile-menu-open");
+    
+    // Update aria-expanded for accessibility
     const isOpen = this.navMenu.classList.contains("mobile-open");
-    
-    if (isOpen) {
-      this.closeMobileMenu();
-    } else {
-      this.openMobileMenu();
-    }
-    
-    // Debug log for mobile testing
-    console.log('Mobile menu toggled:', {
-      isOpen: !isOpen,
-      menuClasses: this.navMenu.className,
-      toggleClasses: this.mobileMenuToggle.className
-    });
-  }
-
-  openMobileMenu() {
-    this.navMenu.classList.add("mobile-open");
-    this.mobileMenuToggle.classList.add("active");
-    document.body.classList.add("mobile-menu-open");
-    this.mobileMenuToggle.setAttribute('aria-expanded', 'true');
+    this.mobileMenuToggle.setAttribute('aria-expanded', isOpen.toString());
   }
 
   closeMobileMenu() {
@@ -1409,63 +1433,33 @@ style.textContent = `
   
   /* Mobile menu styles */
   @media (max-width: 768px) {
-    .nav-menu {
-      display: none !important;
-      position: fixed !important;
-      top: var(--navbar-height) !important;
-      left: 0 !important;
-      right: 0 !important;
-      background: linear-gradient(135deg, rgba(13, 2, 33, 0.95), rgba(26, 11, 46, 0.9)) !important;
-      backdrop-filter: blur(20px) !important;
-      border-top: 1px solid rgba(139, 92, 246, 0.2) !important;
-      flex-direction: column !important;
-      padding: 2rem !important;
-      gap: 1.5rem !important;
-      transform: translateY(-100%) !important;
-      opacity: 0 !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      z-index: 999 !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    
-    .nav-menu.mobile-open {
-      display: flex !important;
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
-    
-    .nav-menu .nav-link {
-      color: var(--text-primary) !important;
-      font-size: 1.2rem !important;
-      padding: 0.75rem 0 !important;
-      text-align: center !important;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
-      width: 100% !important;
-    }
-    
-    .nav-menu .nav-link:last-child {
-      border-bottom: none !important;
-    }
-    
-    .mobile-menu-toggle {
-      display: flex !important;
-    }
-    
     .mobile-menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px) !important;
+      transform: rotate(45deg) translate(5px, 5px);
     }
     
     .mobile-menu-toggle.active span:nth-child(2) {
-      opacity: 0 !important;
+      opacity: 0;
     }
     
     .mobile-menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -6px) !important;
+      transform: rotate(-45deg) translate(7px, -6px);
     }
     
     body.mobile-menu-open {
-      overflow: hidden !important;
+      overflow: hidden;
+    }
+    
+    .nav-menu.mobile-open .nav-link {
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      padding: 0.75rem 0;
+      text-align: center;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+      width: 100%;
+    }
+    
+    .nav-menu.mobile-open .nav-link:last-child {
+      border-bottom: none;
     }
   }
 `;
