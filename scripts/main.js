@@ -8,18 +8,6 @@ class NebulaWebsite {
     this.navbar = document.getElementById("navbar");
     this.mobileMenuToggle = document.getElementById("mobile-menu-toggle");
     this.navMenu = document.getElementById("nav-menu");
-    
-    // Force desktop navigation visibility on load
-    if (window.innerWidth > 768) {
-      if (this.navMenu) {
-        this.navMenu.style.display = 'flex';
-        this.navMenu.classList.remove('mobile-open');
-      }
-      if (this.mobileMenuToggle) {
-        this.mobileMenuToggle.style.display = 'none';
-      }
-    }
-    
     this.init();
   }
 
@@ -33,38 +21,6 @@ class NebulaWebsite {
     this.setupScrollIndicator();
     this.setupContactForm();
     this.startPerformanceAnimations();
-    this.setupResponsiveNavigation();
-  }
-
-  // Handle responsive navigation
-  setupResponsiveNavigation() {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        // Desktop mode
-        if (this.navMenu) {
-          this.navMenu.style.display = 'flex';
-          this.navMenu.classList.remove('mobile-open');
-        }
-        if (this.mobileMenuToggle) {
-          this.mobileMenuToggle.style.display = 'none';
-        }
-        document.body.classList.remove('mobile-menu-open');
-      } else {
-        // Mobile mode
-        if (this.navMenu) {
-          this.navMenu.style.display = '';
-        }
-        if (this.mobileMenuToggle) {
-          this.mobileMenuToggle.style.display = '';
-        }
-      }
-    };
-
-    // Call on load
-    handleResize();
-    
-    // Call on resize
-    window.addEventListener('resize', handleResize);
   }
 
   // Navbar scroll effects with performance throttling
@@ -162,25 +118,15 @@ class NebulaWebsite {
   // Mobile menu functionality
   setupMobileMenu() {
     if (this.mobileMenuToggle && this.navMenu) {
-      // Add click event to toggle button
-      this.mobileMenuToggle.addEventListener("click", (e) => {
-        e.preventDefault();
+      this.mobileMenuToggle.addEventListener("click", () => {
         this.toggleMobileMenu();
       });
 
       // Close menu when clicking outside
       document.addEventListener("click", (e) => {
-        if (!this.navbar.contains(e.target) && this.navMenu.classList.contains('mobile-open')) {
+        if (!this.navbar.contains(e.target)) {
           this.closeMobileMenu();
         }
-      });
-
-      // Close menu when clicking on nav links
-      const navLinks = this.navMenu.querySelectorAll('.nav-link');
-      navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-          this.closeMobileMenu();
-        });
       });
     }
   }
@@ -189,17 +135,12 @@ class NebulaWebsite {
     this.navMenu.classList.toggle("mobile-open");
     this.mobileMenuToggle.classList.toggle("active");
     document.body.classList.toggle("mobile-menu-open");
-    
-    // Update aria-expanded for accessibility
-    const isOpen = this.navMenu.classList.contains("mobile-open");
-    this.mobileMenuToggle.setAttribute('aria-expanded', isOpen.toString());
   }
 
   closeMobileMenu() {
     this.navMenu.classList.remove("mobile-open");
     this.mobileMenuToggle.classList.remove("active");
     document.body.classList.remove("mobile-menu-open");
-    this.mobileMenuToggle.setAttribute('aria-expanded', 'false');
   }
 
   // Update active navigation link based on scroll position
@@ -1433,6 +1374,29 @@ style.textContent = `
   
   /* Mobile menu styles */
   @media (max-width: 768px) {
+    .nav-menu {
+      position: fixed;
+      top: var(--navbar-height);
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, rgba(13, 2, 33, 0.95), rgba(26, 11, 46, 0.9));
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      flex-direction: column;
+      padding: 2rem;
+      gap: 1.5rem;
+      transform: translateY(-100%);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+    }
+    
+    .nav-menu.mobile-open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
     .mobile-menu-toggle.active span:nth-child(1) {
       transform: rotate(45deg) translate(5px, 5px);
     }
@@ -1447,19 +1411,6 @@ style.textContent = `
     
     body.mobile-menu-open {
       overflow: hidden;
-    }
-    
-    .nav-menu.mobile-open .nav-link {
-      color: var(--text-primary);
-      font-size: 1.2rem;
-      padding: 0.75rem 0;
-      text-align: center;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-      width: 100%;
-    }
-    
-    .nav-menu.mobile-open .nav-link:last-child {
-      border-bottom: none;
     }
   }
 `;
