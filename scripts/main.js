@@ -21,6 +21,7 @@ class NebulaWebsite {
     this.setupScrollIndicator();
     this.setupContactForm();
     this.startPerformanceAnimations();
+    this.setupMobileScrollFix();
   }
 
   // Navbar scroll effects with performance throttling
@@ -725,6 +726,98 @@ class NebulaWebsite {
         }
       }, 300);
     }, 5000); // Show for 5 seconds
+  }
+
+  // Setup mobile scroll fixes to prevent black panel issue
+  setupMobileScrollFix() {
+    // Detect mobile browsers
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // Prevent overscroll bounce effect
+      document.body.style.overscrollBehavior = 'none';
+      document.documentElement.style.overscrollBehavior = 'none';
+      
+      // Add mobile-specific class
+      document.body.classList.add('mobile-device');
+      
+      // Handle iOS Safari address bar changes
+      this.handleMobileViewportChanges();
+      
+      // Prevent elastic scrolling at document boundaries
+      this.preventElasticScroll();
+    }
+  }
+
+  // Handle mobile viewport changes (iOS Safari address bar)
+  handleMobileViewportChanges() {
+    let initialViewportHeight = window.innerHeight;
+    
+    const handleViewportChange = () => {
+      const currentHeight = window.innerHeight;
+      
+      // If viewport height changed significantly (address bar show/hide)
+      if (Math.abs(currentHeight - initialViewportHeight) > 100) {
+        // Update CSS custom property for dynamic viewport height
+        document.documentElement.style.setProperty('--mobile-vh', `${currentHeight * 0.01}px`);
+        
+        // Force background elements to recalculate
+        const backgrounds = document.querySelectorAll('.cosmic-background, .star-field, .nebula-overlay');
+        backgrounds.forEach(bg => {
+          bg.style.height = `calc(${currentHeight}px + 200px)`;
+        });
+      }
+    };
+    
+    window.addEventListener('resize', handleViewportChange, { passive: true });
+    window.addEventListener('orientationchange', handleViewportChange, { passive: true });
+  }
+
+  // Prevent elastic scroll at document boundaries
+  preventElasticScroll() {
+    let isAtTop = false;
+    let isAtBottom = false;
+    
+    const checkScrollPosition = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      isAtTop = scrollTop <= 0;
+      isAtBottom = scrollTop + windowHeight >= documentHeight;
+    };
+    
+    // Check initial position
+    checkScrollPosition();
+    
+    // Monitor scroll position
+    window.addEventListener('scroll', checkScrollPosition, { passive: true });
+    
+    // Prevent elastic scroll on touch devices
+    document.addEventListener('touchstart', (e) => {
+      this.touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', (e) => {
+      if (!this.touchStartY) return;
+      
+      const touchY = e.touches[0].clientY;
+      const touchDelta = this.touchStartY - touchY;
+      
+      // Prevent overscroll at top
+      if (isAtTop && touchDelta < 0) {
+        e.preventDefault();
+      }
+      
+      // Prevent overscroll at bottom
+      if (isAtBottom && touchDelta > 0) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    
+    document.addEventListener('touchend', () => {
+      this.touchStartY = null;
+    }, { passive: true });
   }
 
   // Utility function for smooth animations

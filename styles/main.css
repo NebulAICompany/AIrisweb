@@ -139,6 +139,12 @@ html {
   font-size: 16px;
   /* Offset for fixed navbar when scrolling to sections */
   scroll-padding-top: calc(var(--navbar-height) + 2rem);
+  /* Fix mobile bounce scroll and black panel issue */
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
+  /* Ensure proper height and background coverage */
+  height: 100%;
+  background-color: var(--bg-primary);
 }
 
 body {
@@ -158,6 +164,12 @@ body {
   /* Prevent horizontal scroll on mobile */
   max-width: 100vw;
   position: relative;
+  /* Fix mobile bounce scroll and black panel issue */
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
+  /* Ensure proper height and background coverage */
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 /* Cosmic Background System - Performance Optimized */
@@ -381,6 +393,62 @@ body.scrolling .gallery-container {
   
   .nebula-overlay {
     animation-duration: 60s;
+  }
+  
+  /* Additional mobile fixes for scroll panel issue */
+  html, body {
+    /* Prevent overscroll bounce effect that shows black panels */
+    overscroll-behavior-y: none;
+    -webkit-overscroll-behavior-y: none;
+    /* Ensure background covers beyond viewport bounds */
+    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+  }
+  
+  /* Extend background elements to cover overscroll areas */
+  .cosmic-background,
+  .star-field,
+  .nebula-overlay {
+    /* Extend beyond viewport to cover bounce areas */
+    height: calc(100vh + 200px);
+    height: calc(100dvh + 200px);
+    /* Center the extended background */
+    top: -100px;
+  }
+  
+  /* Fix for iOS Safari address bar changes */
+  body {
+    /* Use the smaller of vh and dvh for consistent experience */
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Prevent elastic scrolling */
+    position: relative;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    -webkit-overscroll-behavior: none;
+  }
+  
+  /* Additional mobile-specific fixes */
+  body.mobile-device {
+    /* Prevent any form of overscroll bounce */
+    overscroll-behavior-y: none;
+    -webkit-overscroll-behavior-y: none;
+    /* Fix for iOS scroll issues */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent zoom on double tap */
+    touch-action: manipulation;
+  }
+  
+  /* Ensure backgrounds extend properly on mobile */
+  body.mobile-device .cosmic-background,
+  body.mobile-device .star-field,
+  body.mobile-device .nebula-overlay {
+    /* Use CSS custom property for dynamic height */
+    height: calc(var(--mobile-vh, 1vh) * 100 + 200px);
+    /* Ensure no gaps at top/bottom */
+    top: -100px;
+    bottom: -100px;
   }
 }
 
