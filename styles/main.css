@@ -1,35 +1,6 @@
 /* Nebula Intelligence Website - Main Styles */
 /* Inspired by AIris Nebula Theme */
 
-/* Force Desktop Navigation Visibility - Critical Fix */
-@media (min-width: 769px) {
-  .nav-menu {
-    display: flex !important;
-    position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 2.5rem !important;
-    background: none !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    padding: 0 !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: auto !important;
-    height: auto !important;
-    z-index: auto !important;
-    opacity: 1 !important;
-    transition: none !important;
-  }
-  
-  .mobile-menu-toggle {
-    display: none !important;
-  }
-}
-
 /* CSS Variables */
 :root {
   /* Nebula Theme Colors */
@@ -528,67 +499,6 @@ body.scrolling .gallery-container {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  /* Ensure desktop navigation is visible by default */
-  background: none;
-  backdrop-filter: none;
-  border: none;
-  flex-direction: row;
-  padding: 0;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  width: auto;
-  height: auto;
-  z-index: auto;
-  opacity: 1;
-}
-
-/* Desktop navigation should always be visible above mobile breakpoint */
-@media (min-width: 769px) {
-  .nav-menu {
-    display: flex !important;
-    position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    background: none !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    flex-direction: row !important;
-    padding: 0 !important;
-    gap: 2.5rem !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: auto !important;
-    height: auto !important;
-    z-index: auto !important;
-    opacity: 1 !important;
-    transition: none !important;
-  }
-  
-  .nav-menu.mobile-open {
-    display: flex !important;
-    position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    background: none !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    flex-direction: row !important;
-    padding: 0 !important;
-    gap: 2.5rem !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: auto !important;
-    height: auto !important;
-    z-index: auto !important;
-    opacity: 1 !important;
-  }
-  
-  .mobile-menu-toggle {
-    display: none !important;
-  }
 }
 
 .nav-link {
@@ -2548,15 +2458,14 @@ body.scrolling .gallery-container {
   }
 }
 
-@media (max-width: 1024px) and (min-width: 769px) {
+@media (max-width: 1024px) {
   .nav-menu {
     gap: 2rem;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    display: flex !important;
   }
-  
+
   .nav-container {
     gap: 1.5rem;
   }
@@ -2611,10 +2520,10 @@ body.scrolling .gallery-container {
     flex-direction: column;
     padding: 2rem;
     gap: 1.5rem;
-    z-index: 999;
     transform: translateY(-100%);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
   }
   
   .nav-menu.mobile-open {
