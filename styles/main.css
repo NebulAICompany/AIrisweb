@@ -142,9 +142,8 @@ html {
   /* Fix mobile bounce scroll and black panel issue */
   overscroll-behavior: none;
   -webkit-overscroll-behavior: none;
-  /* Ensure proper height and background coverage */
+  /* Ensure proper height coverage without solid background */
   height: 100%;
-  background-color: var(--bg-primary);
 }
 
 body {
