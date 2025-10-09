@@ -1429,6 +1429,120 @@ function initializeGallery() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const galleryTrack = document.querySelector(".gallery-track");
+  const items = document.querySelectorAll(".gallery-item");
+  const prevButton = document.querySelector(".gallery-nav.prev");
+  const nextButton = document.querySelector(".gallery-nav.next");
+  const paginationIndicators = document.querySelectorAll(".page-indicator");
+
+  let currentIndex = 0;
+
+  // Update the gallery's position and pagination
+  const updateGallery = () => {
+    // Add smooth transition effect
+    galleryTrack.style.transition = "transform 0.5s ease-in-out";
+    galleryTrack.style.transform = `translateX(-${currentIndex * 100}vw)`;
+
+    // Update pagination indicators
+    paginationIndicators.forEach((indicator, index) => {
+      indicator.classList.toggle("active", index === currentIndex);
+    });
+  };
+
+  // Show the next item
+  const showNext = () => {
+    currentIndex = (currentIndex + 1) % items.length; // Loop to the first item
+    updateGallery();
+  };
+
+  // Show the previous item
+  const showPrev = () => {
+    currentIndex = (currentIndex - 1 + items.length) % items.length; // Loop to the last item
+    updateGallery();
+  };
+
+  // Add event listeners to buttons
+  nextButton.addEventListener("click", showNext);
+  prevButton.addEventListener("click", showPrev);
+
+  // Add event listeners to pagination indicators
+  paginationIndicators.forEach((indicator, index) => {
+    indicator.addEventListener("click", () => {
+      currentIndex = index;
+      updateGallery();
+    });
+  });
+
+  // Set initial position on load
+  updateGallery();
+});
+
+ // YouTube IFrame API yükle
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('demo-video-iframe', {
+          events: {
+            'onReady': onPlayerReady
+          }
+        });
+      }
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      // Kullanıcı ilk tıkladığında sesi aç ve oynat
+      function enableSoundOnInteraction() {
+        if (player && typeof player.unMute === "function") {
+          player.unMute();
+          player.playVideo();
+        }
+        window.removeEventListener('click', enableSoundOnInteraction);
+        window.removeEventListener('keydown', enableSoundOnInteraction);
+      }
+      window.addEventListener('click', enableSoundOnInteraction);
+      window.addEventListener('keydown', enableSoundOnInteraction);
+
+      // Intersection Observer ile video görünürlüğünü kontrol et
+      document.addEventListener("DOMContentLoaded", function () {
+        var iframe = document.getElementById('demo-video-iframe');
+        if (!iframe) return;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (player && typeof player.pauseVideo === "function" && typeof player.playVideo === "function") {
+              if (entry.isIntersecting) {
+                player.playVideo();
+              } else {
+                player.pauseVideo();
+              }
+            }
+          });
+        }, { threshold: 0.1 });
+        observer.observe(iframe);
+      });
+
+      // Scroll arrow tıklanınca demo bölümüne kaydır
+      document.addEventListener("DOMContentLoaded", function () {
+        var scrollArrow = document.getElementById('scroll-to-demo');
+        if (scrollArrow) {
+          scrollArrow.addEventListener('click', function () {
+        var demoSection = document.getElementById('demo');
+        if (demoSection) {
+          // Demo bölümünün biraz daha altına kaydırmak için offset ekle
+          var offset = 80; // piksel cinsinden, ihtiyaca göre artırabilirsiniz
+          var rect = demoSection.getBoundingClientRect();
+          var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          var targetY = rect.top + scrollTop - offset;
+          window.scrollTo({ top: targetY, behavior: 'smooth' });
+        }
+          });
+        }
+      });
 // Add CSS animations dynamically
 const style = document.createElement("style");
 style.textContent = `
