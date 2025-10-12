@@ -464,7 +464,6 @@ body.scrolling .gallery-container {
 
 /* Container */
 .container {
-  max-width: var(--container-max-width);
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -523,7 +522,6 @@ body.scrolling .gallery-container {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  max-width: var(--container-max-width);
   margin: 0 auto;
   padding: 0 2rem;
   gap: 2rem;
@@ -1566,7 +1564,6 @@ body.scrolling .gallery-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -1576,7 +1573,7 @@ body.scrolling .gallery-container {
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   width: 100%;
-  max-width: 800px;
+  max-width: 53%;
 }
 
 .video-wrapper {

@@ -1534,7 +1534,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var demoSection = document.getElementById('demo');
         if (demoSection) {
           // Demo bölümünün biraz daha altına kaydırmak için offset ekle
-          var offset = 80; // piksel cinsinden, ihtiyaca göre artırabilirsiniz
+          var offset = 80; 
           var rect = demoSection.getBoundingClientRect();
           var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           var targetY = rect.top + scrollTop - offset;
