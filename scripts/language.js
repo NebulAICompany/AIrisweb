@@ -74,6 +74,11 @@ class LanguageManager {
       metaDescription.content =
         this.translations[this.currentLanguage].meta.description;
     }
+
+    // Update title for better SEO
+    if (this.translations[this.currentLanguage].meta.title) {
+      document.title = this.translations[this.currentLanguage].meta.title;
+    }
   }
 
   // Apply translations to the page
@@ -176,8 +181,9 @@ class LanguageManager {
     return {
       en: {
         meta: {
+          title: "AIris: Enterprise Finance Automation - Nebula Intelligence",
           description:
-            "AIris is an advanced AI-powered desktop application for financial document processing, verification, and analysis. Experience the future of financial technology with Nebula Intelligence.",
+            "Revolutionize your financial workflow with AIris. The unified intelligence engine for secure, autonomous, and strategic operations. Powered by Nebula Intelligence.",
         },
         nav: {
           home: "Home",
@@ -493,8 +499,9 @@ class LanguageManager {
       },
       tr: {
         meta: {
+          title: "AIris: Kurumsal Finans Otomasyonu - Nebula Intelligence",
           description:
-            "AIris, finansal belge işleme, doğrulama ve analiz için gelişmiş AI destekli masaüstü uygulamasıdır. Nebula Intelligence ile finansal teknolojinin geleceğini deneyimleyin.",
+            "AIris ile finansal iş akışınızda devrim yaratın. Güvenli, otonom ve stratejik operasyonlar için birleşik zeka motoru. Nebula Intelligence tarafından desteklenmektedir.",
         },
         nav: {
           home: "Ana Sayfa",
